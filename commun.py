@@ -24,7 +24,7 @@ class ResponseThread(th.Thread):
         self.page_nb= r'&page='
         self.response = requests.get(f"{self.uri}{self.page_size}{self.page_nb}{self.page}{self.project_id}{self.filtre_id}{self.filtre}", verify=False, headers=self.headers).json()
 
-headers = {"Authorization": "IFHLjxZMapaYVb7aFyhVA03iq4MyfhYr"}
+headers = {"Authorization": ""}
 page_size = r'?page_size=250'
 project_id= r'&project_id=10,12'
 url= r'https://assistance-semsirh.in.phm.education.gouv.fr/sam-public/'
