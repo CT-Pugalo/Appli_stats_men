@@ -2,6 +2,10 @@ import requests, time
 import threading as th
 from datetime import date
 from urllib3.exceptions import InsecureRequestWarning
+from dotenv import dotenv_values
+
+config = dotenv_values(".env")
+token = cofig["Token"]
 
 requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
@@ -24,7 +28,7 @@ class ResponseThread(th.Thread):
         self.page_nb= r'&page='
         self.response = requests.get(f"{self.uri}{self.page_size}{self.page_nb}{self.page}{self.project_id}{self.filtre_id}{self.filtre}", verify=False, headers=self.headers).json()
 
-headers = {"Authorization": ""}
+headers = {"Authorization": token}
 page_size = r'?page_size=250'
 project_id= r'&project_id=10,12'
 url= r'https://assistance-semsirh.in.phm.education.gouv.fr/sam-public/'
