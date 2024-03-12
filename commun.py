@@ -5,7 +5,7 @@ from urllib3.exceptions import InsecureRequestWarning
 from dotenv import dotenv_values
 
 config = dotenv_values(".env")
-token = cofig["Token"]
+token = config["Token"]
 
 requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
@@ -148,7 +148,7 @@ def ThreadPool_Index(responses):
             while(anyThreadAlive(threads)):
                 for t in ["|", '/', '-', '\\']:
                     print(f"Indexation en cours {t}", end='\r', flush=True)
-                    time.sleep(0.1)
+                    time.sleep(0.01)
             print( "                       ", end='\r', flush=True)
             for thread in range(i, i+5):
                 threads[thread].join()
