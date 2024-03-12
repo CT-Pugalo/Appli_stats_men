@@ -41,6 +41,9 @@ def get_pie(titre, legend, data, figure=1):
     plt.legend(loc="lower left")
     return f1
 
+#######################
+# TODO: Ajouter les stats sur les tickets entré et les tickets Traité
+#######################
 
 if __name__ == "__main__":
 
