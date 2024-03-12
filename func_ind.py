@@ -1,4 +1,3 @@
-import commun as c
 from datetime import date
 
 def worked_on(issue, name):
@@ -170,8 +169,8 @@ def getPI(issues ={}, pi={"23": {"debut": [2024, 2, 5],"fin": [2024, 4, 29]}} ):
         created_at = issue["created_at"]
         for numero_pi, dates_pi in pi.items():
             deb=date(dates_pi["debut"][0], dates_pi["debut"][1], dates_pi["debut"][2])
-            end=date(dates_pi["fin"][0], dates_pi["fin"][1], dates_pi["fin"][2])
-            if(created_at>=deb and created_at<=end):
+            fin=date(dates_pi["fin"][0], dates_pi["fin"][1], dates_pi["fin"][2])
+            if(created_at>=deb and created_at<=fin):
                 issues[issue_id]["pi"]=numero_pi
 def countPI(issues= {}):
     pi_counter = {}
