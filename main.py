@@ -34,9 +34,9 @@ def sort(tickets_pi):
         first = first_pi(tickets_pi)
     return sorted_tickets
 
-def get_pie(legend, data):
-    f1 = plt.figure(1)
-    plt.title("Ticket par Groupe de Diffusion")
+def get_pie(titre, legend, data, figure=1):
+    f1 = plt.figure(figure)
+    plt.title(titre)
     plt.pie(data, labels=legend, startangle=90, radius=1.2, autopct=lambda pct: func(pct, data), pctdistance=0.8)
     plt.legend(loc="lower left")
     return f1
@@ -91,7 +91,8 @@ if __name__ == "__main__":
     #issues_pi
     data_PI_courrant = c.ThreadPool_Index(tickets_PI_courrant)
 
-    _, stats, _ =ind.num_of_worked_ticket_all(names, no_double=False, issues=data_PI_courrant)
+    _, stats_pi_courant, _ =ind.num_of_worked_ticket_all(names, no_double=False, issues=data_PI_courrant)
+    _, stats_tout_pi, _ =ind.num_of_worked_ticket_all(names, no_double=False, issues=data_tout_PI)
     tickets_par_groupe = ind.num_of_ticket_by_group(issues=data_PI_courrant)
     ind.getPI(data_tout_PI, Pi)
     nb_tickets_pi = sort(ind.countPI(data_tout_PI))
@@ -110,12 +111,14 @@ if __name__ == "__main__":
     print(f"Temps total: {min},{sec}")
 
     group, totaux = [], []
-    names, tickets = [], []
+    tickets_par_personne_pi_courant, tickets_par_personne_tout_pi = [], []
     pi, total, moy = [], [], []
 
-    for name, nb_tickets in stats.items():
-        names.append(name)
-        tickets.append(nb_tickets[0])
+    for _, nb_tickets in stats_pi_courant.items():
+        tickets_par_personne_pi_courant.append(nb_tickets[0])
+
+    for _, nb_tickets in stats_tout_pi.items():
+        tickets_par_personne_tout_pi.append(nb_tickets[0])
 
     for label_groupe, val_group in tickets_par_groupe.items():
         group.append(label_groupe)
@@ -129,14 +132,13 @@ if __name__ == "__main__":
     x=[key for key in sort(ind.countCPE_by_PI(data_tout_PI)).keys()]
     y=[value for value in sort(ind.countCPE_by_PI(data_tout_PI)).values()]
 
-    f1=get_pie(group, totaux)
+    f1 = get_pie("Total tickets par groupe de diff\nPI courrant", group, totaux, 1)
 
-    f2 = plt.figure(2)
-    plt.title("Ticket par Personne (CGI)")
-    plt.pie(tickets, labels=names, startangle=90, radius=1.2, autopct=lambda pct: func(pct, tickets), pctdistance=0.8)
-    plt.legend(loc="lower left")
+    f2 = get_pie("Total tickets par personne (CGI)\nPI courrant", names, tickets_par_personne_pi_courant, 2)
 
-    f3 = plt.figure(3)
+    f3 = get_pie("Total tickets par personne (CGI)\ntout PI", names, tickets_par_personne_tout_pi, 3)
+
+    f4 = plt.figure(4)
     plt.title("Ticket par PI\n(et nombre de ticket passé par le CPE)")
     plt.bar(pi, total)
     plt.plot(x,y, 'py--')
