@@ -1,49 +1,4 @@
-import commun as c
-import func_ind as ind
-import matplotlib.pyplot as plt
-import numpy as np
-
-def func(pct, allvals):
-    absolute = int(np.round(pct/100.*np.sum(allvals)))
-    return f"{pct:.1f}%\n({absolute:d})"
-
-def normalize_date(date):
-        day = date[0]
-        month = date[1]
-        year = date[2]
-        while day>30:
-            month+=1
-            day-=30
-        while month>12:
-            year+=1
-            month-=12
-        return [day, month, year]
-
-def first_pi(tickets_pi):
-    first="1000"
-    for key in tickets_pi:
-        if(int(first) > int(key)):
-            first=key
-    return first
-
-def sort(tickets_pi):
-    sorted_tickets = {}
-    first = first_pi(tickets_pi)
-    while(len(tickets_pi)>0):
-        sorted_tickets[first] = tickets_pi.pop(first)
-        first = first_pi(tickets_pi)
-    return sorted_tickets
-
-def get_pie(titre, legend, data, figure=1):
-    f1 = plt.figure(figure)
-    plt.title(titre)
-    plt.pie(data, labels=legend, startangle=90, radius=1.2, autopct=lambda pct: func(pct, data), pctdistance=0.8)
-    plt.legend(loc="lower left")
-    return f1
-
-#######################
-# TODO: Ajouter les stats sur les tickets entré et les tickets Traité
-#######################
+from uti import *
 
 if __name__ == "__main__":
 
@@ -82,41 +37,35 @@ if __name__ == "__main__":
 
     time_start=c.time.time()
 
-    #responses
-    tickets_tout_PI = c.ThreadPool_reponses(diff_tout_PI, 10)
-
-    #responses_pi
+    tickets_tout_PI     = c.ThreadPool_reponses(diff_tout_PI, 10)
     tickets_PI_courrant = c.ThreadPool_reponses(diff_pi_23, 10)
-
-    #issues
-    data_tout_PI = c.ThreadPool_Index(tickets_tout_PI)
-
-    #issues_pi
-    data_PI_courrant = c.ThreadPool_Index(tickets_PI_courrant)
-
-    _, stats_pi_courant, _ =ind.num_of_worked_ticket_all(names, no_double=False, issues=data_PI_courrant)
-    _, stats_tout_pi, _ =ind.num_of_worked_ticket_all(names, no_double=False, issues=data_tout_PI)
-    tickets_par_groupe = ind.num_of_ticket_by_group(issues=data_PI_courrant)
-    ind.getPI(data_tout_PI, Pi)
-    nb_tickets_pi = sort(ind.countPI(data_tout_PI))
+    data_tout_PI        = c.ThreadPool_Index(tickets_tout_PI)
+    data_PI_courrant    = c.ThreadPool_Index(tickets_PI_courrant)
 
     time_end=c.time.time()
-
-    temps_trait= round(time_end-time_start, 2)
-
+    temps_trait = round(time_end-time_start, 2)
     min=0
     sec=temps_trait
-
     while(sec>=60):
         min+=1
         sec-=60
-
     print(f"Temps total: {min},{sec}")
-
-    group, totaux = [], []
+    
+    _, stats_pi_courant, _ = ind.num_of_worked_ticket_all(names, no_double=False, issues=data_PI_courrant)
+    _, stats_tout_pi, _    = ind.num_of_worked_ticket_all(names, no_double=False, issues=data_tout_PI)
+    tickets_par_groupe     = ind.num_of_ticket_by_group(issues=data_PI_courrant)
+    nb_tickets_traite      = ind.count_nb_Status("Traité", data_PI_courrant)
+    nb_tickets_clos        = ind.count_nb_Status("Clos", data_PI_courrant)
+    nb_tickets_fini        = nb_tickets_traite + nb_tickets_clos
+    ind.getPI(data_tout_PI, Pi)
+    print(nb_tickets_traite, nb_tickets_clos)
+    nb_tickets_pi = sort(ind.countPI(data_tout_PI))
+    
+    group  = [keys for keys in tickets_par_groupe.keys()]
+    totaux = []
     tickets_par_personne_pi_courant, tickets_par_personne_tout_pi = [], []
     pi, total, moy = [], [], []
-
+    
     for _, nb_tickets in stats_pi_courant.items():
         tickets_par_personne_pi_courant.append(nb_tickets[0])
 
@@ -124,27 +73,24 @@ if __name__ == "__main__":
         tickets_par_personne_tout_pi.append(nb_tickets[0])
 
     for label_groupe, val_group in tickets_par_groupe.items():
-        group.append(label_groupe)
         totaux.append(tickets_par_groupe[label_groupe]["Total"])
 
     for label_pi, values in nb_tickets_pi.items():
-        pi.append(label_pi)
         total.append(values["Total"])
         moy.append(values["Moyenne/Mois"])
 
     x=[key for key in sort(ind.countCPE_by_PI(data_tout_PI)).keys()]
     y=[value for value in sort(ind.countCPE_by_PI(data_tout_PI)).values()]
-
     f1 = get_pie("Total tickets par groupe de diff\nPI courrant", group, totaux, 1)
-
     f2 = get_pie("Total tickets par personne (CGI)\nPI courrant", names, tickets_par_personne_pi_courant, 2)
-
     f3 = get_pie("Total tickets par personne (CGI)\ntout PI", names, tickets_par_personne_tout_pi, 3)
 
     f4 = plt.figure(4)
     plt.title("Ticket par PI\n(et nombre de ticket passé par le CPE)")
-    plt.bar(pi, total)
+    plt.bar(x, total)
     plt.plot(x,y, 'py--')
-    plt.bar(pi, y, color="green")
+    plt.bar(x, y, color="green")
 
+    f5 = get_pie("Proportion ticket traité", ["Ticket non-traité", "ticket traité"], [len(data_PI_courrant)-nb_tickets_fini, nb_tickets_fini], 5)
+    
     plt.show()

@@ -208,3 +208,12 @@ def countCPE_by_PI(issues={}):
                 if issue["cpe"]:
                     counter[issue["pi"]] = counter[issue["pi"]]+1
     return counter
+
+def count_nb_Status(status, issues={}):
+    if len(issues)==0 :
+        return
+    count=0
+    for _, issue in issues.items():
+        if issue["status"]==status:
+            count+=1    
+    return count

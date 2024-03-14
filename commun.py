@@ -28,31 +28,6 @@ class ResponseThread(th.Thread):
         self.page_nb= r'&page='
         self.response = requests.get(f"{self.uri}{self.page_size}{self.page_nb}{self.page}{self.project_id}{self.filtre_id}{self.filtre}", verify=False, headers=self.headers).json()
 
-headers = {"Authorization": token}
-page_size = r'?page_size=250'
-project_id= r'&project_id=10,12'
-url= r'https://assistance-semsirh.in.phm.education.gouv.fr/sam-public/'
-api= r'api/rest/issues'
-uri= f'{url}{api}'
-
-def getResponse(page, filtre):
-    global headers
-    global uri
-    global page_size
-    global project_id
-
-    filtre_id= r'&filter_id='
-    page_nb= r'&page='
-
-    print(f"getting page: {page}")
-    time_start=time.time()
-    response = requests.get(f"{uri}{page_size}{page_nb}{page}{project_id}{filtre_id}{filtre}", verify=False, headers=headers)
-    time_end=time.time()
-    time_diff = time_end - time_start
-    print(f'retrived in: {round(time_diff, 2)}s\n', end='\r', flush=True)
-
-    return response
-
 class ResponseThread(th.Thread):
 
     def __init__(self, page, filtre):
@@ -62,7 +37,7 @@ class ResponseThread(th.Thread):
         self.project_id= r'&project_id=10,12'
         self.url= r'https://assistance-semsirh.in.phm.education.gouv.fr/sam-public/'
         self.api= r'api/rest/issues'
-        self.uri= f'{url}{api}'
+        self.uri= f'{self.url}{self.api}'
         self.headers = {"Authorization": "IFHLjxZMapaYVb7aFyhVA03iq4MyfhYr"}
         self.response = None
         th.Thread.__init__(self)
@@ -77,7 +52,21 @@ class IndexingThread(th.Thread):
         self.responsejson = response
         self.issues = {}
         th.Thread.__init__(self)
-
+#####
+#   issue:{
+#          notes: [{
+#           id: id de la note,
+#           reporter: nom du reporter,
+#           text: corp de la note,
+#           state: visibilité de la note (public/privée)
+#       }],
+#          status: etat du ticket,
+#          created_at: timestamp de la création du ticket,
+#          pi: pi du ticket,
+#          diff: groupe de diffusion du ticket,
+#          cpe: passé par le CPE (Vrai ou Faux)
+#       }
+#####
     def run(self):
         length = len(self.responsejson["issues"])
         for i in range( 0, length ):
@@ -124,7 +113,6 @@ def ThreadPool_reponses(filtre, depth=5):
             for i in ["|", '/', '-', '\\']:
                 print(f"Pagination en cours {i}", end='\r', flush=True)
                 time.sleep(0.1)
-        print( "                       ", end='\r', flush=True)
         for i in threads:
             i.join()
         for i in threads:
@@ -133,6 +121,7 @@ def ThreadPool_reponses(filtre, depth=5):
                 end=True
         page+=depth
         threads = []
+    print( "Pagination terminé         ", end='\n', flush=False)
     return responses
 
 def ThreadPool_Index(responses):
@@ -149,11 +138,11 @@ def ThreadPool_Index(responses):
                 for t in ["|", '/', '-', '\\']:
                     print(f"Indexation en cours {t}", end='\r', flush=True)
                     time.sleep(0.01)
-            print( "                       ", end='\r', flush=True)
             for thread in range(i, i+5):
                 threads[thread].join()
             for thread in range(i, i+5):
                 index.update(threads[thread].issues)
+    print( "Indexation  terminé         ", end='\n', flush=False)
     return index
 
 
