@@ -54,11 +54,9 @@ if __name__ == "__main__":
     _, stats_pi_courant, _ = ind.num_of_worked_ticket_all(names, no_double=False, issues=data_PI_courrant)
     _, stats_tout_pi, _    = ind.num_of_worked_ticket_all(names, no_double=False, issues=data_tout_PI)
     tickets_par_groupe     = ind.num_of_ticket_by_group(issues=data_PI_courrant)
-    nb_tickets_traite      = ind.count_nb_Status("Traité", data_PI_courrant)
-    nb_tickets_clos        = ind.count_nb_Status("Clos", data_PI_courrant)
-    nb_tickets_fini        = nb_tickets_traite + nb_tickets_clos
+    nb_tickets_fini        = ind.count_nb_Status("Traite", data_PI_courrant) + ind.count_nb_Status("Clos", data_PI_courrant)
+    nb_tickets_enCours     = ind.count_nb_Status("En cours", data_PI_courrant)
     ind.getPI(data_tout_PI, Pi)
-    print(nb_tickets_traite, nb_tickets_clos)
     nb_tickets_pi = sort(ind.countPI(data_tout_PI))
     
     group  = [keys for keys in tickets_par_groupe.keys()]
@@ -81,16 +79,30 @@ if __name__ == "__main__":
 
     x=[key for key in sort(ind.countCPE_by_PI(data_tout_PI)).keys()]
     y=[value for value in sort(ind.countCPE_by_PI(data_tout_PI)).values()]
+    
+    label_etats = ["Ticket en attente", "ticket traité", "ticket en cours"]
+    data_etats  = [
+            len(data_PI_courrant)-nb_tickets_fini-nb_tickets_enCours,
+            nb_tickets_fini,nb_tickets_enCours,
+            ]
+
+    details_ticket_en_attente_label = ["Signale", "A reprendre", "A traiter", "Transmis pour traitement"]
+    details_ticket_en_attente_data = [
+                ind.count_nb_Status("Signale", data_PI_courrant),
+                ind.count_nb_Status("A reprendre", data_PI_courrant),
+                ind.count_nb_Status("A traiter", data_PI_courrant),
+                ind.count_nb_Status("Transmis pour traitement", data_PI_courrant),
+            ]
+
     f1 = get_pie("Total tickets par groupe de diff\nPI courrant", group, totaux, 1)
     f2 = get_pie("Total tickets par personne (CGI)\nPI courrant", names, tickets_par_personne_pi_courant, 2)
     f3 = get_pie("Total tickets par personne (CGI)\ntout PI", names, tickets_par_personne_tout_pi, 3)
-
-    f4 = plt.figure(4)
+    f4 = get_pie("Repartition des tickets par états", label_etats, data_etats, 4)
+    f5 = get_pie("Details sur les tickets 'En attente'", details_ticket_en_attente_label, details_ticket_en_attente_data, 5)
+    f6 = plt.figure(6)
     plt.title("Ticket par PI\n(et nombre de ticket passé par le CPE)")
     plt.bar(x, total)
     plt.plot(x,y, 'py--')
     plt.bar(x, y, color="green")
 
-    f5 = get_pie("Proportion ticket traité", ["Ticket non-traité", "ticket traité"], [len(data_PI_courrant)-nb_tickets_fini, nb_tickets_fini], 5)
-    
     plt.show()
