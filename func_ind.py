@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import * 
 
 def worked_on(issue, name):
     as_worked = False
@@ -16,10 +16,26 @@ def num_of_worked_ticket(name, issues={}):
     if(len(issues)==0):
         return
     for key, values in issues.items():
-        if(worked_on(key, values,name)):
+        if(worked_on(values,name)):
             counter+=1
             id_worked.append(key)
     return id_worked, counter, len(issues)
+
+####
+#TODO: Regarde la date de la note plutot que celle du ticket
+####
+
+def num_worked_by_day(name, issues={}):
+    if(len(issues)==0):
+        return
+    tickets_by_days = {name: {}} 
+    for key, values in issues.items():
+        if(worked_on(values, name)):
+            if(values["updated_at"].strftime("%d/%m/%Y") in tickets_by_days[name]):
+                tickets_by_days[name][values["updated_at"].strftime("%d/%m/%Y")] += 1
+            else:
+                tickets_by_days[name][values["updated_at"].strftime("%d/%m/%Y")] = 1
+    return tickets_by_days
 
 def num_of_worked_ticket_all(names, no_double=False, issues={}):
     id_worked=[]

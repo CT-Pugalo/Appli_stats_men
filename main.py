@@ -1,4 +1,5 @@
 from uti import *
+import json
 
 if __name__ == "__main__":
 
@@ -58,7 +59,11 @@ if __name__ == "__main__":
     nb_tickets_enCours     = ind.count_nb_Status("En cours", data_PI_courrant)
     ind.getPI(data_tout_PI, Pi)
     nb_tickets_pi = sort(ind.countPI(data_tout_PI))
-    
+ 
+    tickets_par_jour_Hugo = ind.num_worked_by_day("hbogdano", data_PI_courrant)
+    with open('data.json', 'w') as f:
+        json.dump(tickets_par_jour_Hugo, f)
+
     group  = [keys for keys in tickets_par_groupe.keys()]
     totaux = []
     tickets_par_personne_pi_courant, tickets_par_personne_tout_pi = [], []
@@ -105,4 +110,4 @@ if __name__ == "__main__":
     plt.plot(x,y, 'py--')
     plt.bar(x, y, color="green")
 
-    plt.show()
+    # plt.show()

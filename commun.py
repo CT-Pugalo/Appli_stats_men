@@ -54,6 +54,7 @@ class IndexingThread(th.Thread):
         th.Thread.__init__(self)
 #####
 #   issue:{
+#          id: id du ticket,
 #          notes: [{
 #           id: id de la note,
 #           reporter: nom du reporter,
@@ -61,12 +62,16 @@ class IndexingThread(th.Thread):
 #           state: visibilité de la note (public/privée)
 #       }],
 #          status: etat du ticket,
-#          created_at: timestamp de la création du ticket,
+#          created_at: date de la création du ticket,
+#          updated_at: date de la dernière maj,
 #          pi: pi du ticket,
 #          diff: groupe de diffusion du ticket,
 #          cpe: passé par le CPE (Vrai ou Faux)
 #       }
 #####
+#########
+#TODO: Ajouter la date de création de la note
+#########
     def run(self):
         length = len(self.responsejson["issues"])
         for i in range( 0, length ):
@@ -87,7 +92,10 @@ class IndexingThread(th.Thread):
             issue["status"] = self.responsejson["issues"][i]["status"]["label"]
             created_at = [int(val) for val in self.responsejson["issues"][i]["created_at"][:10].split('-')]
             created_at=date(created_at[0], created_at[1], created_at[2])
+            updated_at = [int(val) for val in self.responsejson["issues"][i]["updated_at"][:10].split('-')]
+            updated_at=date(updated_at[0], updated_at[1], updated_at[2])
             issue["created_at"]=created_at
+            issue["updated_at"]=updated_at
             issue["pi"]=None
             for filed in self.responsejson["issues"][i]["custom_fields"]:
                 if filed["field"]["id"] == 31:
