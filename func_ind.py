@@ -1,4 +1,4 @@
-from datetime import * 
+from datetime import date 
 
 def worked_on(issue, name):
     as_worked = False
@@ -14,7 +14,7 @@ def num_of_worked_ticket(name, issues={}):
     id_worked=[]
     counter=0
     if(len(issues)==0):
-        return
+        return {}
     for key, values in issues.items():
         if(worked_on(values,name)):
             counter+=1
@@ -22,14 +22,14 @@ def num_of_worked_ticket(name, issues={}):
     return id_worked, counter, len(issues)
 
 ####
-#TODO: Regarde la date de la note plutot que celle du ticket
+#TODO: Regarder la date de la note plutot que celle du ticket
 ####
 
 def num_worked_by_day(name, issues={}):
     if(len(issues)==0):
-        return
+        return {}
     tickets_by_days = {name: {}} 
-    for key, values in issues.items():
+    for _, values in issues.items():
         if(worked_on(values, name)):
             if(values["updated_at"].strftime("%d/%m/%Y") in tickets_by_days[name]):
                 tickets_by_days[name][values["updated_at"].strftime("%d/%m/%Y")] += 1
@@ -42,7 +42,7 @@ def num_of_worked_ticket_all(names, no_double=False, issues={}):
     id_doubled=[]
     name_counter= dict.fromkeys(names)
     if(len(issues)==0):
-        return
+        return {}
     counter=0
     for name_index in range(0, len(names)):
         name=names[name_index]
@@ -70,103 +70,103 @@ def num_of_ticket_by_group(issues={}):
     num_ticket={
         'Diffusion-GA': {
             "Etats": {
-            "Signale": 0,
-            "Premiere prise en charge": 0,
-            "En cours": 0,
-            "Connu": 0,
-            "Transmis pour traitement": 0,
-            "A traiter": 0,
-            "A reprendre": 0,
-            "A completer": 0,
+                "Signale": 0,
+                "Premiere prise en charge": 0,
+                "En cours": 0,
+                "Connu": 0,
+                "Transmis pour traitement": 0,
+                "A traiter": 0,
+                "A reprendre": 0,
+                "A completer": 0,
             },
             "Total": 0},
         'Diffusion-PCI': {
             "Etats": {
-            "Signale": 0,
-            "Premiere prise en charge": 0,
-            "En cours": 0,
-            "Connu": 0,
-            "Transmis pour traitement": 0,
-            "A traiter": 0,
-            "A reprendre": 0,
-            "A completer": 0,
+                "Signale": 0,
+                "Premiere prise en charge": 0,
+                "En cours": 0,
+                "Connu": 0,
+                "Transmis pour traitement": 0,
+                "A traiter": 0,
+                "A reprendre": 0,
+                "A completer": 0,
             },
             "Total": 0},
         'Diffusion-Paye': {
             "Etats": {
-            "Signale": 0,
-            "Premiere prise en charge": 0,
-            "En cours": 0,
-            "Connu": 0,
-            "Transmis pour traitement": 0,
-            "A traiter": 0,
-            "A reprendre": 0,
-            "A completer": 0,
+                "Signale": 0,
+                "Premiere prise en charge": 0,
+                "En cours": 0,
+                "Connu": 0,
+                "Transmis pour traitement": 0,
+                "A traiter": 0,
+                "A reprendre": 0,
+                "A completer": 0,
             },
             "Total": 0},
         'Diffusion-Remplacement': {
             "Etats": {
-            "Signale": 0,
-            "Premiere prise en charge": 0,
-            "En cours": 0,
-            "Connu": 0,
-            "Transmis pour traitement": 0,
-            "A traiter": 0,
-            "A reprendre": 0,
-            "A completer": 0,
+                "Signale": 0,
+                "Premiere prise en charge": 0,
+                "En cours": 0,
+                "Connu": 0,
+                "Transmis pour traitement": 0,
+                "A traiter": 0,
+                "A reprendre": 0,
+                "A completer": 0,
             },
             "Total": 0},
         'Diffusion-Transverse': {
             "Etats": {
-            "Signale": 0,
-            "Premiere prise en charge": 0,
-            "En cours": 0,
-            "Connu": 0,
-            "Transmis pour traitement": 0,
-            "A traiter": 0,
-            "A reprendre": 0,
-            "A completer": 0,
+                "Signale": 0,
+                "Premiere prise en charge": 0,
+                "En cours": 0,
+                "Connu": 0,
+                "Transmis pour traitement": 0,
+                "A traiter": 0,
+                "A reprendre": 0,
+                "A completer": 0,
             },
             "Total": 0},
         'Diffusion-CPE': {
             "Etats": {
-            "Signale": 0,
-            "Premiere prise en charge": 0,
-            "En cours": 0,
-            "Connu": 0,
-            "Transmis pour traitement": 0,
-            "A traiter": 0,
-            "A reprendre": 0,
-            "A completer": 0,
+                "Signale": 0,
+                "Premiere prise en charge": 0,
+                "En cours": 0,
+                "Connu": 0,
+                "Transmis pour traitement": 0,
+                "A traiter": 0,
+                "A reprendre": 0,
+                "A completer": 0,
             },
             "Total": 0},
         'Diffusion-Mouvement': {
             "Etats": {
-            "Signale": 0,
-            "Premiere prise en charge": 0,
-            "En cours": 0,
-            "Connu": 0,
-            "Transmis pour traitement": 0,
-            "A traiter": 0,
-            "A reprendre": 0,
-            "A completer": 0,
+                "Signale": 0,
+                "Premiere prise en charge": 0,
+                "En cours": 0,
+                "Connu": 0,
+                "Transmis pour traitement": 0,
+                "A traiter": 0,
+                "A reprendre": 0,
+                "A completer": 0,
             },
             "Total": 0},
         'Diffusion-Budget-Moyen': {
             "Etats": {
-            "Signale": 0,
-            "Premiere prise en charge": 0,
-            "En cours": 0,
-            "Connu": 0,
-            "Transmis pour traitement": 0,
-            "A traiter": 0,
-            "A reprendre": 0,
-            "A completer": 0,
+                "Signale": 0,
+                "Premiere prise en charge": 0,
+                "En cours": 0,
+                "Connu": 0,
+                "Transmis pour traitement": 0,
+                "A traiter": 0,
+                "A reprendre": 0,
+                "A completer": 0,
             },
             "Total": 0},
         }
     if(len(issues)==0):
-        return
+        return {}
     for issue_id in issues.keys():
         status = issues[issue_id]["status"]
         groupe=issues[issue_id]["diff"]
@@ -178,9 +178,15 @@ def num_of_ticket_by_group(issues={}):
                         num_ticket[diff_groupe]["Etats"][label_etat] = num_etat+1
     return num_ticket
 
+##
+#TODO: Organiser les tickets par PI:{PI: [issues:tickets]}
+#
+##
+
 def getPI(issues ={}, pi={"23": {"debut": [2024, 2, 5],"fin": [2024, 4, 29]}} ):
     if(len(issues) == 0):
-        return
+        return {}
+    Issues_by_pi = {}
     for issue_id, issue in issues.items():
         created_at = issue["created_at"]
         for numero_pi, dates_pi in pi.items():
@@ -188,11 +194,17 @@ def getPI(issues ={}, pi={"23": {"debut": [2024, 2, 5],"fin": [2024, 4, 29]}} ):
             fin=date(dates_pi["fin"][0], dates_pi["fin"][1], dates_pi["fin"][2])
             if(created_at>=deb and created_at<=fin):
                 issues[issue_id]["pi"]=numero_pi
+                if(numero_pi in Issues_by_pi):
+                    Issues_by_pi[numero_pi].update({issue_id: issue})
+                else:
+                    Issues_by_pi[numero_pi]={}
+    return Issues_by_pi
+
 def countPI(issues= {}):
     pi_counter = {}
     if(len(issues) == 0):
-        return
-    for issue_id, issue in issues.items():
+        return {}
+    for _, issue in issues.items():
         # issue["pi"] => {"23"}
         if(issue["pi"] != None):
             if issue["pi"] in pi_counter:
@@ -205,7 +217,7 @@ def countPI(issues= {}):
 
 def countCPE(issues={}):
     if(len(issues) == 0):
-        return
+        return {}
     count=0
     for _, issue in issues.items():
         if issue["cpe"]:
@@ -214,7 +226,7 @@ def countCPE(issues={}):
 
 def countCPE_by_PI(issues={}):
     if(len(issues) == 0):
-        return
+        return {}
     counter = {}
     for _, issue in issues.items():
         if not issue["pi"] == None:
@@ -227,7 +239,7 @@ def countCPE_by_PI(issues={}):
 
 def count_nb_Status(status, issues={}):
     if len(issues)==0 :
-        return
+        return -1
     count=0
     for _, issue in issues.items():
         if issue["status"]==status:

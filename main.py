@@ -1,4 +1,8 @@
+import os
+import func_ind as ind
+import commun as c
 from uti import *
+from datetime import date
 import json
 
 if __name__ == "__main__":
@@ -32,18 +36,19 @@ if __name__ == "__main__":
         'jdumarais', 'mvallee', 'ccadoret',
         'arossi', 'abuisset', 'jandrieu',
         'ehaenel', 'scauliez', 'jorozco',
-        'gmosnier',
+        'gmosnier', 'lpierson',
         #'scabanne1', 'rplainar',
             ]
-
+    
     time_start=c.time.time()
 
-    tickets_tout_PI     = c.ThreadPool_reponses(diff_tout_PI, 10)
-    tickets_PI_courrant = c.ThreadPool_reponses(diff_pi_23, 10)
-    data_tout_PI        = c.ThreadPool_Index(tickets_tout_PI)
-    data_PI_courrant    = c.ThreadPool_Index(tickets_PI_courrant)
+    tickets_tout_PI = c.ThreadPool_reponses(diff_tout_PI, 10)
+    data_tout_PI    = c.ThreadPool_Index(tickets_tout_PI)
+    issues_by_pi    = ind.getPI(data_tout_PI, Pi)
 
     time_end=c.time.time()
+    with open("data.json", "w", encoding="utf-8") as file:
+        print(json.dumps(tickets_tout_PI), file = file)
     temps_trait = round(time_end-time_start, 2)
     min=0
     sec=temps_trait
@@ -51,18 +56,15 @@ if __name__ == "__main__":
         min+=1
         sec-=60
     print(f"Temps total: {min},{sec}")
-    
-    _, stats_pi_courant, _ = ind.num_of_worked_ticket_all(names, no_double=False, issues=data_PI_courrant)
+    data_PI_courrant = issues_by_pi["23"]
+    _, stats_pi_courant, nb_tickets_pi_courant = ind.num_of_worked_ticket_all(names, no_double=False, issues=data_PI_courrant)
     _, stats_tout_pi, _    = ind.num_of_worked_ticket_all(names, no_double=False, issues=data_tout_PI)
     tickets_par_groupe     = ind.num_of_ticket_by_group(issues=data_PI_courrant)
     nb_tickets_fini        = ind.count_nb_Status("Traite", data_PI_courrant) + ind.count_nb_Status("Clos", data_PI_courrant)
     nb_tickets_enCours     = ind.count_nb_Status("En cours", data_PI_courrant)
-    ind.getPI(data_tout_PI, Pi)
-    nb_tickets_pi = sort(ind.countPI(data_tout_PI))
+    nb_tickets_pi          = sort(ind.countPI(data_tout_PI))
  
     tickets_par_jour_Hugo = ind.num_worked_by_day("hbogdano", data_PI_courrant)
-    with open('data.json', 'w') as f:
-        json.dump(tickets_par_jour_Hugo, f)
 
     group  = [keys for keys in tickets_par_groupe.keys()]
     totaux = []
@@ -99,15 +101,35 @@ if __name__ == "__main__":
                 ind.count_nb_Status("Transmis pour traitement", data_PI_courrant),
             ]
 
+    day = date.today();
+    try:
+        os.mkdir(f"./images/{day}")
+    except FileExistsError as e:
+        pass
+
     f1 = get_pie("Total tickets par groupe de diff\nPI courrant", group, totaux, 1)
+    plt.savefig(f"images/{day}/fig1.png")
+    plt.close()
+
     f2 = get_pie("Total tickets par personne (CGI)\nPI courrant", names, tickets_par_personne_pi_courant, 2)
-    f3 = get_pie("Total tickets par personne (CGI)\ntout PI", names, tickets_par_personne_tout_pi, 3)
-    f4 = get_pie("Repartition des tickets par états", label_etats, data_etats, 4)
-    f5 = get_pie("Details sur les tickets 'En attente'", details_ticket_en_attente_label, details_ticket_en_attente_data, 5)
+    plt.savefig(f"images/{day}/fig2.png")
+    plt.close()
+
+    f3 = get_pie("Total tickets par personne (CGI)\ntout PI", names, tickets_par_personne_tout_pi, 3, display_legend=False)
+    plt.close()
+
+    f4 = get_pie("Repartition des tickets par états\nPI courrant", label_etats, data_etats, 4)
+    plt.savefig(f"images/{day}/fig4.png")
+    plt.close()
+
+    f5 = get_pie("Details sur les tickets 'En attente'\nPI courrant", details_ticket_en_attente_label, details_ticket_en_attente_data, 5)
+    plt.savefig(f"images/{day}/fig5.png")
+    plt.close()
+
     f6 = plt.figure(6)
     plt.title("Ticket par PI\n(et nombre de ticket passé par le CPE)")
     plt.bar(x, total)
     plt.plot(x,y, 'py--')
     plt.bar(x, y, color="green")
-
-    # plt.show()
+    plt.savefig(f"images/{day}/fig6.png")
+    plt.close()
