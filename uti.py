@@ -32,10 +32,10 @@ def sort(tickets_pi):
         sorted_tickets[first] = tickets_pi.pop(first)
     return sorted_tickets
 
-def get_pie(titre, legend, data, figure=1, display_legend=True):
+def get_pie(titre, legend, data, figure=1, display_legend=True, color=None):
     f1 = plt.figure(figure, layout="tight", figsize=figsize(12.8, 9.6))
     plt.title(titre)
-    plt.pie(data, labels=legend, startangle=90, radius=1.2, autopct=lambda pct: func(pct, data), pctdistance=0.8)
+    plt.pie(data, labels=legend, startangle=90, radius=1.2, autopct=lambda pct: func(pct, data), pctdistance=0.8, colors=color)
     match display_legend:
         case True: plt.legend(legend)
         case False: pass

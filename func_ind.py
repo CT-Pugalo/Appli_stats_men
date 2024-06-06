@@ -1,4 +1,4 @@
-from datetime import date 
+from datetime import date
 
 def worked_on(issue, name):
     as_worked = False
@@ -29,12 +29,19 @@ def num_worked_by_day(name, issues={}):
     if(len(issues)==0):
         return {}
     tickets_by_days = {name: {}} 
+    average = 0
+    length = 0
     for _, values in issues.items():
         if(worked_on(values, name)):
             if(values["updated_at"].strftime("%d/%m/%Y") in tickets_by_days[name]):
                 tickets_by_days[name][values["updated_at"].strftime("%d/%m/%Y")] += 1
+                average+=1
             else:
                 tickets_by_days[name][values["updated_at"].strftime("%d/%m/%Y")] = 1
+                length+=1
+
+    average = average/length if length != 0 else 0
+    tickets_by_days[name]["moyenne"] = average
     return tickets_by_days
 
 def num_of_worked_ticket_all(names, no_double=False, issues={}):
@@ -180,10 +187,11 @@ def num_of_ticket_by_group(issues={}):
 
 ##
 #TODO: Organiser les tickets par PI:{PI: [issues:tickets]}
+# Regarder la date de mise à jour et non la date de création
 #
 ##
 
-def getPI(issues ={}, pi={"23": {"debut": [2024, 2, 5],"fin": [2024, 4, 29]}} ):
+def getPI(issues ={}, pi={"23": {"debut": [2024, 2, 5],"fin": [2024, 5, 31]}} ):
     if(len(issues) == 0):
         return {}
     Issues_by_pi = {}
