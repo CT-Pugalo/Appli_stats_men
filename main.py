@@ -26,6 +26,10 @@ if __name__ == "__main__":
             "debut": [2024, 2, 5],
             "fin": [2024, 5, 31]
         },
+        "24": {
+            "debut": [2024, 6, 3],
+            "fin": [2024, 9, 9]
+        },
     }
     names= [
         'kbelabbas', 'hbogdano', 'srichard',
@@ -44,8 +48,6 @@ if __name__ == "__main__":
     issues_by_pi    = ind.getPI(data_tout_PI, Pi)
 
     time_end=c.time.time()
-    with open("data.json", "w", encoding="utf-8") as file:
-        print(json.dumps(tickets_tout_PI), file = file)
     temps_trait = round(time_end-time_start, 2)
     min=0
     sec=temps_trait
@@ -53,7 +55,7 @@ if __name__ == "__main__":
         min+=1
         sec-=60
     print(f"Temps total: {min},{sec}")
-    data_PI_courrant = issues_by_pi["23"]
+    data_PI_courrant = issues_by_pi["24"]
     _, stats_pi_courant, nb_tickets_pi_courant = ind.num_of_worked_ticket_all(names, no_double=True, issues=data_PI_courrant)
     _, stats_tout_pi, _    = ind.num_of_worked_ticket_all(names, no_double=True, issues=data_tout_PI)
     tickets_par_groupe     = ind.num_of_ticket_by_group(issues=data_PI_courrant)
